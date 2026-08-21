@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>io.github.codedogapp</groupId>
+    <artifactId>gridlink</artifactId>
+    <version>0.0.1</version>
+    <packaging>pom</packaging>
+
+    <name>GridLink</name>
+    <description>AG Grid server side model compatability layer</description>
+    <url>https://github.com/codedogapp/project-veritas</url>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://www.opensource.org/licenses/mit-license.php</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Bakhomious Basta</name>
+            <email>bakhomioussvp@gmail.com</email>
+            <organization>CodeDog</organization>
+            <organizationUrl>https://github.com/codedogapp</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/codedogapp/gridlink.git</connection>
+        <developerConnection>scm:git:ssh://github.com:codedogapp/gridlink.git</developerConnection>
+        <url>https://github.com/codedogapp/gridlink/tree/main</url>
+    </scm>
+
+    <properties>
+        <maven.compiler.release>17</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <spring-data-elasticsearch.version>6.1.0</spring-data-elasticsearch.version>
+        <jspecify.version>1.0.1</jspecify.version>
+        <junit.version>5.11.4</junit.version>
+    </properties>
+
+    <modules>
+        <module>gridlink-core</module>
+        <module>gridlink-elasticsearch</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.github.codedogapp</groupId>
+                <artifactId>gridlink-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-elasticsearch</artifactId>
+                <version>${spring-data-elasticsearch.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jspecify</groupId>
+                <artifactId>jspecify</artifactId>
+                <version>${jspecify.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>

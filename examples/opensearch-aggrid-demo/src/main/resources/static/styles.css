@@ -1,0 +1,7 @@
+:root { color-scheme: light dark; }
+body { font-family: system-ui, sans-serif; margin: 0; padding: 24px; }
+header { margin-bottom: 16px; }
+h1 { font-size: 1.25rem; margin: 0 0 4px; }
+p { margin: 0; color: #666; font-size: 0.9rem; }
+#grid { height: 640px; width: 100%; }
+code { background: rgba(127,127,127,.15); padding: 1px 5px; border-radius: 4px; }

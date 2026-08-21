@@ -1,0 +1,34 @@
+[tools]
+java = 'corretto-21'
+maven = "latest"
+
+[tasks."ci:core"]
+description = "'core' job: build & test gridlink-core"
+run = "mvn -B -pl gridlink-core -am verify"
+
+[tasks."ci:matrix"]
+description = "'adapter-matrix': verify the adapter against every supported spring-data-elasticsearch line"
+run = """
+#!/usr/bin/env bash
+set -uo pipefail
+list="ci/spring-data-elasticsearch-versions.json"
+failed=""
+tested=""
+for v in $(jq -r '.[]' "$list"); do
+  echo "==> spring-data-elasticsearch ${v}"
+  if ! mvn -B -pl gridlink-elasticsearch -am verify -Dspring-data-elasticsearch.version="${v}"; then
+    failed="${failed} ${v}"
+  fi
+  tested="${tested} ${v}"
+done
+echo
+if [ -n "${failed}" ]; then
+  echo "matrix FAILED for:${failed}"
+  exit 1
+fi
+echo "matrix OK for:${tested}"
+"""
+
+[tasks.test]
+description = "Run full tests suite with compatability matrix"
+depends = ["ci:core", "ci:matrix"]

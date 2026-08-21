@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="data:," />
+  <title>gridlink · ag-grid + Spring Boot 4 + OpenSearch</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@33/dist/ag-grid-community.min.js"></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>Products</h1>
+    <p>
+      Filter/sort are sent to <code>POST /api/products/query</code> and translated to OpenSearch
+      queries by <code>gridlink</code>. Try a text filter on <em>Name</em>/<em>Category</em>, a date
+      filter on <em>Created</em>, and sort any column.
+    </p>
+  </header>
+
+  <div id="grid"></div>
+</body>
+</html>
