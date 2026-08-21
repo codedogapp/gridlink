@@ -1,4 +1,4 @@
-package io.github.codedogapp.gridlink.demo;
+package io.github.codedogapp.gridlink.demo.product.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
@@ -9,14 +9,7 @@ import org.springframework.data.elasticsearch.annotations.Setting;
 
 import java.time.LocalDateTime;
 
-/**
- * A product document stored in OpenSearch.
- *
- * <p>{@code name} and {@code category} are keyword fields with a lowercase normalizer so that the
- * case-insensitive, lowercased term/wildcard queries produced by the gridlink adapter match
- * regardless of the stored casing. {@code createdAt} uses the {@code date_hour_minute_second}
- * format that gridlink emits for date range bounds.
- */
+
 @Document(indexName = "products")
 @Setting(settingPath = "/opensearch/product-settings.json")
 public record Product(
@@ -37,4 +30,5 @@ public record Product(
     LocalDateTime createdAt
 
 ) {
+
 }

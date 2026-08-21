@@ -20,16 +20,23 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+
 class ElasticsearchQueriesQueryTest {
 
-    private static final FieldFilter NAME =
-        FieldFilter.builder().type(TextFilterType.contains).filter("mac").build();
+    private static final FieldFilter NAME = FieldFilter.builder()
+        .type(TextFilterType.contains)
+        .filter("mac")
+        .build();
 
     @Test
     void assemblesCriteriaSortAndPageFromRequest() {
         final FilterModel model = () -> Map.of("name", NAME);
         final GridRequest<FilterModel> request = new GridRequest<>(
-            100, 200, List.of(new SortModel("name", SortDirection.asc)), model);
+            100,
+            200,
+            List.of(new SortModel("name", SortDirection.asc)),
+            model
+        );
 
         final CriteriaQuery query = ElasticsearchQueries.toQuery(request);
 
@@ -37,6 +44,7 @@ class ElasticsearchQueriesQueryTest {
         assertEquals(request.pageNumber(), query.getPageable().getPageNumber(), "pageNumber");
         assertEquals(request.limit(), query.getPageable().getPageSize(), "pageSize");
 
+        assertNotNull(query.getSort());
         final Sort.Order order = query.getSort().getOrderFor("name");
         assertNotNull(order, "sort order for name");
         assertTrue(order.isAscending(), "ascending");

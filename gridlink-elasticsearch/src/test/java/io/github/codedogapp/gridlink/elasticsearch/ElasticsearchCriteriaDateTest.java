@@ -17,12 +17,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
+
 class ElasticsearchCriteriaDateTest {
 
     static Stream<Arguments> singleBoundCases() {
         return Stream.of(
-            arguments(DateFilterType.greaterThan, Criteria.where("d").greaterThan(iso("2024-06-15", 0, 0, 0))),
-            arguments(DateFilterType.lessThan, Criteria.where("d").lessThan(iso("2024-06-15", 0, 0, 0)))
+            arguments(
+                DateFilterType.greaterThan,
+                Criteria.where("d").greaterThan(iso("2024-06-15", 0, 0, 0))
+            ),
+            arguments(
+                DateFilterType.lessThan,
+                Criteria.where("d").lessThan(iso("2024-06-15", 0, 0, 0))
+            )
         );
     }
 
@@ -34,12 +41,30 @@ class ElasticsearchCriteriaDateTest {
 
     static Stream<Arguments> betweenCases() {
         return Stream.of(
-            arguments(DateFilterType.equals, "2024-06-15", null,
-                iso("2024-06-15", 0, 0, 0), iso("2024-06-15", 23, 59, 59), false),
-            arguments(DateFilterType.notEqual, "2024-06-15", null,
-                iso("2024-06-15", 0, 0, 0), iso("2024-06-15", 23, 59, 59), true),
-            arguments(DateFilterType.inRange, "2024-01-01", "2024-12-31",
-                iso("2024-01-01", 0, 0, 0), iso("2024-12-31", 23, 59, 59), false)
+            arguments(
+                DateFilterType.equals,
+                "2024-06-15",
+                null,
+                iso("2024-06-15", 0, 0, 0),
+                iso("2024-06-15", 23, 59, 59),
+                false
+            ),
+            arguments(
+                DateFilterType.notEqual,
+                "2024-06-15",
+                null,
+                iso("2024-06-15", 0, 0, 0),
+                iso("2024-06-15", 23, 59, 59),
+                true
+            ),
+            arguments(
+                DateFilterType.inRange,
+                "2024-01-01",
+                "2024-12-31",
+                iso("2024-01-01", 0, 0, 0),
+                iso("2024-12-31", 23, 59, 59),
+                false
+            )
         );
     }
 

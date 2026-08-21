@@ -2,10 +2,12 @@ package io.github.codedogapp.gridlink.demo.product.api.service;
 
 import io.github.codedogapp.gridlink.core.grid.GridRequest;
 import io.github.codedogapp.gridlink.core.grid.GridResponse;
-import io.github.codedogapp.gridlink.demo.Product;
+import io.github.codedogapp.gridlink.demo.product.model.Product;
 import io.github.codedogapp.gridlink.demo.product.api.dto.ProductFilterModel;
 import io.github.codedogapp.gridlink.elasticsearch.ElasticsearchQueries;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;

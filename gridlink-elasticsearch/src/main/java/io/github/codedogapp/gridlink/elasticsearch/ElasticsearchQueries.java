@@ -7,6 +7,7 @@ import io.github.codedogapp.gridlink.core.filter.FilterModel;
 import io.github.codedogapp.gridlink.core.grid.GridRequest;
 import io.github.codedogapp.gridlink.core.sort.SortModel;
 
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +18,7 @@ import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
 
 /**
  * High-level facade turning GridLink filter/sort models into Spring Data Elasticsearch
@@ -84,7 +86,7 @@ public final class ElasticsearchQueries {
      * @param filterModel the consumer's filter model, or {@code null} for no filtering
      * @return a root {@link Criteria}; empty (match-all) when there are no active columns
      */
-    public static Criteria toCriteria(final @Nullable FilterModel filterModel) {
+    public static @NonNull Criteria toCriteria(final @Nullable FilterModel filterModel) {
         return filterModel == null ? new Criteria() : toCriteria(filterModel.filters());
     }
 
@@ -102,9 +104,9 @@ public final class ElasticsearchQueries {
      *
      * @param filters the field-to-filter map, or {@code null}
      * @return a root {@link Criteria}; empty (match-all) when {@code filters} is {@code null} or has no
-     *     active columns
+     * active columns
      */
-    public static Criteria toCriteria(final @Nullable Map<String, ? extends ColumnFilter> filters) {
+    public static @NonNull Criteria toCriteria(final @Nullable Map<String, ? extends ColumnFilter> filters) {
         final Criteria root = new Criteria();
         if (filters == null) {
             return root;
@@ -120,10 +122,10 @@ public final class ElasticsearchQueries {
     }
 
     private static @Nullable Criteria columnCriteria(final String field, final @Nullable ColumnFilter filter) {
-        if (filter instanceof FieldFilter text) {
+        if (filter instanceof final FieldFilter text) {
             return toCriteria(field, text);
         }
-        if (filter instanceof DateFieldFilter date) {
+        if (filter instanceof final DateFieldFilter date) {
             return toCriteria(field, date);
         }
         return null;
@@ -138,7 +140,7 @@ public final class ElasticsearchQueries {
      * @param request the ag-grid request; its {@code filterModel} may be {@code null} (match-all)
      * @return a {@link CriteriaQuery} with criteria, sort and pageable applied
      */
-    public static CriteriaQuery toQuery(final GridRequest<?> request) {
+    public static @NonNull CriteriaQuery toQuery(final @NonNull GridRequest<?> request) {
         final CriteriaQuery query = new CriteriaQuery(toCriteria(request.filterModel()));
         sorts(request.sortModel()).forEach(query::addSort);
         query.setPageable(PageRequest.of(request.pageNumber(), request.limit()));

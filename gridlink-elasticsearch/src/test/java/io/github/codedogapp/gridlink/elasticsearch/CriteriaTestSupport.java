@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+
 /**
  * Shared assertion/format helpers for the adapter tests.
  */
@@ -31,13 +32,14 @@ final class CriteriaTestSupport {
         final boolean negating
     ) {
         assertNotNull(actual);
+        assertNotNull(actual.getField());
         assertEquals(field, actual.getField().getName());
         assertEquals(negating, actual.isNegating());
         final var entries = actual.getQueryCriteriaEntries();
         assertEquals(1, entries.size());
         final var entry = entries.iterator().next();
         assertEquals(Criteria.OperationKey.BETWEEN, entry.getKey());
-        assertArrayEquals(new Object[] {lo, hi}, (Object[]) entry.getValue());
+        assertArrayEquals(new Object[]{lo, hi}, (Object[]) entry.getValue());
     }
 
 }

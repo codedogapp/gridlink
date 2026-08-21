@@ -20,14 +20,23 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+
 class ElasticsearchQueriesFilterModelTest {
 
-    private static final FieldFilter NAME =
-        FieldFilter.builder().type(TextFilterType.contains).filter("mac").build();
-    private static final FieldFilter CATEGORY =
-        FieldFilter.builder().type(TextFilterType.equals).filter("Electronics").build();
-    private static final DateFieldFilter CREATED_AT =
-        DateFieldFilter.builder().type(DateFilterType.greaterThan).dateFrom("2024-01-01").build();
+    private static final FieldFilter NAME = FieldFilter.builder()
+        .type(TextFilterType.contains)
+        .filter("mac")
+        .build();
+
+    private static final FieldFilter CATEGORY = FieldFilter.builder()
+        .type(TextFilterType.equals)
+        .filter("Electronics")
+        .build();
+
+    private static final DateFieldFilter CREATED_AT = DateFieldFilter.builder()
+        .type(DateFilterType.greaterThan)
+        .dateFrom("2024-01-01")
+        .build();
 
     private static Map<String, ColumnFilter> columns(final Object... fieldThenFilter) {
         final Map<String, ColumnFilter> map = new LinkedHashMap<>();
@@ -39,24 +48,34 @@ class ElasticsearchQueriesFilterModelTest {
 
     static Stream<Arguments> filterMaps() {
         return Stream.of(
-            Arguments.of("empty map -> match-all root",
+            Arguments.of(
+                "empty map -> match-all root",
                 columns(),
-                new Criteria()),
-            Arguments.of("single text column keyed by field name",
+                new Criteria()
+            ),
+            Arguments.of(
+                "single text column keyed by field name",
                 columns("name", NAME),
-                new Criteria().subCriteria(ElasticsearchQueries.toCriteria("name", NAME))),
-            Arguments.of("null column value skipped",
+                new Criteria().subCriteria(ElasticsearchQueries.toCriteria("name", NAME))
+            ),
+            Arguments.of(
+                "null column value skipped",
                 columns("name", NAME, "category", null),
-                new Criteria().subCriteria(ElasticsearchQueries.toCriteria("name", NAME))),
-            Arguments.of("every column active, kept in map iteration order",
+                new Criteria().subCriteria(ElasticsearchQueries.toCriteria("name", NAME))
+            ),
+            Arguments.of(
+                "every column active, kept in map iteration order",
                 columns("name", NAME, "category", CATEGORY, "createdAt", CREATED_AT),
                 new Criteria()
                     .subCriteria(ElasticsearchQueries.toCriteria("name", NAME))
                     .subCriteria(ElasticsearchQueries.toCriteria("category", CATEGORY))
-                    .subCriteria(ElasticsearchQueries.toCriteria("createdAt", CREATED_AT))),
-            Arguments.of("field name is decoupled from any component name",
+                    .subCriteria(ElasticsearchQueries.toCriteria("createdAt", CREATED_AT))
+            ),
+            Arguments.of(
+                "field name is decoupled from any component name",
                 columns("productName", NAME),
-                new Criteria().subCriteria(ElasticsearchQueries.toCriteria("productName", NAME)))
+                new Criteria().subCriteria(ElasticsearchQueries.toCriteria("productName", NAME))
+            )
         );
     }
 

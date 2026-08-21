@@ -33,3 +33,9 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### SQLite (demo system-of-record, regenerated on startup) ###
+*.db
+*.db-journal
+*.db-wal
+*.db-shm

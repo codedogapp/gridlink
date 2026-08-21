@@ -19,16 +19,19 @@ import static io.github.codedogapp.gridlink.elasticsearch.CriteriaTestSupport.is
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+
 class ElasticsearchQueriesTest {
 
     @Test
     void compoundTextFilterChainsConditions() {
         final var filter = FieldFilter.builder()
             .operator(FilterOperator.OR)
-            .conditions(List.of(
-                FieldFilter.builder().type(TextFilterType.equals).filter("x").build(),
-                FieldFilter.builder().type(TextFilterType.equals).filter("y").build()
-            ))
+            .conditions(
+                List.of(
+                    FieldFilter.builder().type(TextFilterType.equals).filter("x").build(),
+                    FieldFilter.builder().type(TextFilterType.equals).filter("y").build()
+                )
+            )
             .build();
 
         assertEquals(
@@ -41,10 +44,12 @@ class ElasticsearchQueriesTest {
     void compoundDateFilterChainsConditions() {
         final var filter = DateFieldFilter.builder()
             .operator(FilterOperator.AND)
-            .conditions(List.of(
-                DateFieldFilter.builder().type(DateFilterType.greaterThan).dateFrom("2024-01-01").build(),
-                DateFieldFilter.builder().type(DateFilterType.lessThan).dateFrom("2024-12-31").build()
-            ))
+            .conditions(
+                List.of(
+                    DateFieldFilter.builder().type(DateFilterType.greaterThan).dateFrom("2024-01-01").build(),
+                    DateFieldFilter.builder().type(DateFilterType.lessThan).dateFrom("2024-12-31").build()
+                )
+            )
             .build();
 
         final var expected = Criteria.where("d").greaterThan(iso("2024-01-01", 0, 0, 0))
@@ -54,11 +59,16 @@ class ElasticsearchQueriesTest {
 
     @Test
     void sortsReturnsSpringSortsInOrder() {
-        final var sorts = ElasticsearchQueries.sorts(List.of(
-            new SortModel("a", SortDirection.asc),
-            new SortModel("b", SortDirection.desc)
-        ));
-        assertEquals(List.of(Sort.by(Sort.Direction.ASC, "a"), Sort.by(Sort.Direction.DESC, "b")), sorts);
+        final var sorts = ElasticsearchQueries.sorts(
+            List.of(
+                new SortModel("a", SortDirection.asc),
+                new SortModel("b", SortDirection.desc)
+            )
+        );
+        assertEquals(
+            List.of(Sort.by(Sort.Direction.ASC, "a"), Sort.by(Sort.Direction.DESC, "b")),
+            sorts
+        );
     }
 
     @Test

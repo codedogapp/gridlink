@@ -32,7 +32,7 @@ public interface FilterModel {
 
     /**
      * @return this model's columns as a map of field name to its {@link ColumnFilter}; values may be
-     *     {@code null} for columns with no active filter.
+     * {@code null} for columns with no active filter.
      */
     Map<String, ColumnFilter> filters();
 

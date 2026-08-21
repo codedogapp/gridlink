@@ -5,6 +5,7 @@ import io.github.codedogapp.gridlink.core.filter.FilterOperator;
 import io.github.codedogapp.gridlink.core.sort.SortDirection;
 import io.github.codedogapp.gridlink.core.filter.TextFilterType;
 
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import org.springframework.data.domain.Sort;
@@ -14,6 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+
 
 /**
  * Translates framework-agnostic GridLink filter tokens into Spring Data Elasticsearch
@@ -36,13 +38,19 @@ public final class ElasticsearchCriteria {
      *
      * @return the criteria, or {@code null} when the value is blank (except {@code blank}/{@code notBlank}).
      */
-    public static @Nullable Criteria text(final TextFilterType type, final String field, final @Nullable String value) {
+    public static @Nullable Criteria text(
+        final TextFilterType type,
+        final String field,
+        final @Nullable String value
+    ) {
         if (type == TextFilterType.blank) {
             return Criteria.where(field).not().exists();
         }
+
         if (type == TextFilterType.notBlank) {
             return Criteria.where(field).exists();
         }
+
         if (value == null || value.isBlank()) {
             return null;
         }
@@ -101,7 +109,10 @@ public final class ElasticsearchCriteria {
      *
      * @return the combined criteria, or {@code null} when the list is empty.
      */
-    public static @Nullable Criteria chain(final FilterOperator operator, final List<Criteria> criteria) {
+    public static @Nullable Criteria chain(
+        final @NonNull FilterOperator operator,
+        final List<Criteria> criteria
+    ) {
         return switch (operator) {
             case AND -> criteria.stream().reduce(Criteria::and).orElse(null);
             case OR -> criteria.stream().reduce(Criteria::or).orElse(null);
@@ -111,14 +122,14 @@ public final class ElasticsearchCriteria {
     /**
      * Maps a GridLink {@link SortDirection} to a Spring Data {@link Sort.Direction}.
      */
-    public static Sort.Direction direction(final SortDirection direction) {
+    public static Sort.Direction direction(final @NonNull SortDirection direction) {
         return switch (direction) {
             case asc -> Sort.Direction.ASC;
             case desc -> Sort.Direction.DESC;
         };
     }
 
-    private static String escape(final String value) {
+    private static @NonNull String escape(final @NonNull String value) {
         return value.replace(" ", "\\ ");
     }
 
@@ -133,11 +144,11 @@ public final class ElasticsearchCriteria {
         }
     }
 
-    private static String toIso(final LocalDateTime dateTime) {
+    private static @NonNull String toIso(final @NonNull LocalDateTime dateTime) {
         return dateTime.format(ISO);
     }
 
-    private static LocalDateTime atEndOfDay(final LocalDate date) {
+    private static @NonNull LocalDateTime atEndOfDay(final @NonNull LocalDate date) {
         return date.atTime(23, 59, 59);
     }
 
