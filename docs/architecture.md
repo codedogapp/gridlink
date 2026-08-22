@@ -38,7 +38,7 @@ flowchart TB
 
 ## The core model
 
-The port is a small, sealed type hierarchy. [`FilterModel`](apidocs/io/github/codedogapp/gridlink/core/filter/FilterModel.html)
+The port is a small, sealed type hierarchy. [`FilterModel`](https://javadoc.io/doc/io.github.codedogapp/gridlink-core/latest/io/github/codedogapp/gridlink/core/filter/FilterModel.html)
 exposes its columns as a `Map<String, ColumnFilter>`, and every value is one of exactly two records &mdash;
 the compiler enforces the set, so translation needs no reflection.
 
@@ -77,7 +77,7 @@ classDiagram
 - **The model mirrors ag-grid's wire JSON**, so a request payload binds directly into typed records with
   no DTO or mapping layer. See [Filtering](filtering.md).
 - **Columns are addressed by a `Map<String, ColumnFilter>`**, so a column's name is decoupled from the
-  document field it targets, and [`ColumnFilter`](apidocs/io/github/codedogapp/gridlink/core/filter/ColumnFilter.html)
+  document field it targets, and [`ColumnFilter`](https://javadoc.io/doc/io.github.codedogapp/gridlink-core/latest/io/github/codedogapp/gridlink/core/filter/ColumnFilter.html)
   stays sealed and reflection-free.
 - **Paging is derived, not stored** &mdash; `offset()` / `limit()` / `pageNumber()` compute from the raw
   `startRow` / `endRow`. See [Sorting & paging](sorting-and-paging.md).

@@ -1,0 +1,63 @@
+name: release
+
+on:
+  push:
+    tags: [ 'v*' ]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Resolve release version from the tag
+        run: |
+          V="${GITHUB_REF_NAME#v}"
+          if [ -z "$V" ] || printf '%s' "$V" | grep -qiE 'snapshot'; then
+            echo "::error::Invalid release version '$V' (empty or SNAPSHOT)."; exit 1
+          fi
+          echo "RELEASE_VERSION=$V" >> "$GITHUB_ENV"
+          echo "Releasing version $V"
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: corretto
+          java-version: '21'
+          cache: maven
+
+      - name: Verify the POM version matches the tag
+        run: |
+          POM_VERSION="$(mvn -B -ntp -q -N help:evaluate -Dexpression=project.version -DforceStdout)"
+          if [ "$POM_VERSION" != "$RELEASE_VERSION" ]; then
+            echo "::error::POM version '$POM_VERSION' does not match tag '$RELEASE_VERSION'. Run the 'prepare-release' workflow and merge its PR before tagging."
+            exit 1
+          fi
+
+      - name: Build, test, and stage artifacts
+        run: mvn -B -ntp -Ppublication clean deploy
+
+      - name: Sign, deploy to Maven Central, and cut the GitHub release
+        run: mvn -B -ntp -N -Pjreleaser jreleaser:full-release
+        env:
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JRELEASER_MAVENCENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+          JRELEASER_MAVENCENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
+          JRELEASER_MAVENCENTRAL_STAGE: FULL
+          JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
+          JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
+      - name: Upload JReleaser logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jreleaser-logs
+          path: |
+            out/jreleaser/trace.log
+            out/jreleaser/output.properties
+          if-no-files-found: ignore

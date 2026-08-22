@@ -1,0 +1,64 @@
+name: prepare-release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version, e.g. 0.2.0 (no leading v, no SNAPSHOT)'
+        required: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Validate the requested version
+        run: |
+          V="${{ github.event.inputs.version }}"
+          if printf '%s' "$V" | grep -qiE 'snapshot'; then
+            echo "::error::Refusing to prepare a SNAPSHOT release."; exit 1
+          fi
+          if ! printf '%s' "$V" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+([-.][0-9A-Za-z.-]+)?$'; then
+            echo "::error::Version '$V' is not a valid release version (expected X.Y.Z, no leading v)."; exit 1
+          fi
+          echo "RELEASE_VERSION=$V" >> "$GITHUB_ENV"
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: corretto
+          java-version: '21'
+          cache: maven
+
+      - name: Set POM version to ${{ env.RELEASE_VERSION }}
+        run: >
+          mvn -B -ntp
+          -DnewVersion="${RELEASE_VERSION}" -DgenerateBackupPoms=false
+          org.codehaus.mojo:versions-maven-plugin:2.21.0:set
+
+      - name: Open the release PR
+        uses: peter-evans/create-pull-request@v8
+        with:
+          branch: release/v${{ env.RELEASE_VERSION }}
+          delete-branch: true
+          title: 'chore(release): v${{ env.RELEASE_VERSION }}'
+          commit-message: 'chore(release): set version to ${{ env.RELEASE_VERSION }}'
+          body: |
+            Automated release preparation for **v${{ env.RELEASE_VERSION }}**.
+
+            Bumps every module POM to `${{ env.RELEASE_VERSION }}`.
+
+            ### To release
+            1. Review and **merge** this PR.
+            2. Tag the merge commit and push:
+               ```
+               git tag v${{ env.RELEASE_VERSION }} && git push origin v${{ env.RELEASE_VERSION }}
+               ```
+
+            The `release` workflow then signs, publishes to Maven Central, and cuts the GitHub release.

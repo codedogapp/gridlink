@@ -5,14 +5,14 @@ nav_order: 4
 
 # Sorting & paging
 
-Both are carried by [`GridRequest`](apidocs/io/github/codedogapp/gridlink/core/grid/GridRequest.html) and
-applied for you by [`ElasticsearchQueries.toQuery`](apidocs/io/github/codedogapp/gridlink/elasticsearch/ElasticsearchQueries.html).
+Both are carried by [`GridRequest`](https://javadoc.io/doc/io.github.codedogapp/gridlink-core/latest/io/github/codedogapp/gridlink/core/grid/GridRequest.html) and
+applied for you by [`ElasticsearchQueries.toQuery`](https://javadoc.io/doc/io.github.codedogapp/gridlink-elasticsearch/latest/io/github/codedogapp/gridlink/elasticsearch/ElasticsearchQueries.html).
 The raw ag-grid fields stay untouched; sort and page are *derived* from them.
 
 ## Sorting
 
-ag-grid's `sortModel` is a list of [`SortModel`](apidocs/io/github/codedogapp/gridlink/core/sort/SortModel.html)
-entries &mdash; `colId` + [`SortDirection`](apidocs/io/github/codedogapp/gridlink/core/sort/SortDirection.html)
+ag-grid's `sortModel` is a list of [`SortModel`](https://javadoc.io/doc/io.github.codedogapp/gridlink-core/latest/io/github/codedogapp/gridlink/core/sort/SortModel.html)
+entries &mdash; `colId` + [`SortDirection`](https://javadoc.io/doc/io.github.codedogapp/gridlink-core/latest/io/github/codedogapp/gridlink/core/sort/SortDirection.html)
 (`asc` / `desc`) &mdash; in **priority order**:
 
 ```json
@@ -31,7 +31,7 @@ entries &mdash; `colId` + [`SortDirection`](apidocs/io/github/codedogapp/gridlin
 &rarr; sort by `category` ascending, then `price` descending.
 
 `toQuery` attaches these to the `CriteriaQuery` in order. If you build a different query type yourself, map
-them with [`sorts(List<SortModel>)`](apidocs/io/github/codedogapp/gridlink/elasticsearch/ElasticsearchQueries.html),
+them with [`sorts(List<SortModel>)`](https://javadoc.io/doc/io.github.codedogapp/gridlink-elasticsearch/latest/io/github/codedogapp/gridlink/elasticsearch/ElasticsearchQueries.html),
 which returns one Spring Data `Sort` per entry:
 
 ```java
@@ -69,7 +69,7 @@ Examples:
 ## Reporting the total
 
 Pair the page with the total match count in
-[`GridResponse`](apidocs/io/github/codedogapp/gridlink/core/grid/GridResponse.html) so ag-grid's infinite
+[`GridResponse`](https://javadoc.io/doc/io.github.codedogapp/gridlink-core/latest/io/github/codedogapp/gridlink/core/grid/GridResponse.html) so ag-grid's infinite
 model knows where the dataset ends:
 
 ```java

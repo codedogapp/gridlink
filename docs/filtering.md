@@ -5,13 +5,13 @@ nav_order: 3
 
 # Filtering
 
-A [`FilterModel`](apidocs/io/github/codedogapp/gridlink/core/filter/FilterModel.html) exposes its columns as a `Map<String, ColumnFilter>` &mdash; field name &rarr; filter. 
-Each value is one of the two sealed [`ColumnFilter`](apidocs/io/github/codedogapp/gridlink/core/filter/ColumnFilter.html) types:
+A [`FilterModel`](https://javadoc.io/doc/io.github.codedogapp/gridlink-core/latest/io/github/codedogapp/gridlink/core/filter/FilterModel.html) exposes its columns as a `Map<String, ColumnFilter>` &mdash; field name &rarr; filter. 
+Each value is one of the two sealed [`ColumnFilter`](https://javadoc.io/doc/io.github.codedogapp/gridlink-core/latest/io/github/codedogapp/gridlink/core/filter/ColumnFilter.html) types:
 
 | Type | Column kind | ag-grid `filterType` |
 | --- | --- | --- |
-| [`FieldFilter`](apidocs/io/github/codedogapp/gridlink/core/filter/FieldFilter.html) | text | `text` |
-| [`DateFieldFilter`](apidocs/io/github/codedogapp/gridlink/core/filter/DateFieldFilter.html) | date | `date` |
+| [`FieldFilter`](https://javadoc.io/doc/io.github.codedogapp/gridlink-core/latest/io/github/codedogapp/gridlink/core/filter/FieldFilter.html) | text | `text` |
+| [`DateFieldFilter`](https://javadoc.io/doc/io.github.codedogapp/gridlink-core/latest/io/github/codedogapp/gridlink/core/filter/DateFieldFilter.html) | date | `date` |
 
 Every type mirrors ag-grid's filter JSON, so a request payload binds straight into it. Text values are
 matched **case-insensitively** (the adapter lowercases the query term).
@@ -30,7 +30,7 @@ A simple text filter is a `type` + `filter` value:
 }
 ```
 
-[`TextFilterType`](apidocs/io/github/codedogapp/gridlink/core/filter/TextFilterType.html) and the query
+[`TextFilterType`](https://javadoc.io/doc/io.github.codedogapp/gridlink-core/latest/io/github/codedogapp/gridlink/core/filter/TextFilterType.html) and the query
 each produces for value `mac` on field `name`:
 
 | `type` | Matches | Elasticsearch query |
@@ -62,7 +62,7 @@ other type uses `dateFrom`:
 }
 ```
 
-[`DateFilterType`](apidocs/io/github/codedogapp/gridlink/core/filter/DateFilterType.html) for field
+[`DateFilterType`](https://javadoc.io/doc/io.github.codedogapp/gridlink-core/latest/io/github/codedogapp/gridlink/core/filter/DateFilterType.html) for field
 `createdAt`:
 
 | `type` | Matches | Elasticsearch query |
@@ -100,7 +100,7 @@ text and dates:
 }
 ```
 
-The conditions are combined with [`FilterOperator`](apidocs/io/github/codedogapp/gridlink/core/filter/FilterOperator.html)
+The conditions are combined with [`FilterOperator`](https://javadoc.io/doc/io.github.codedogapp/gridlink-core/latest/io/github/codedogapp/gridlink/core/filter/FilterOperator.html)
 `AND` or `OR` &rarr; `name ~ *mac*  OR  name ~ *iphone*`.
 
 ## Multiple columns

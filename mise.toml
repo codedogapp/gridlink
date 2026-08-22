@@ -33,20 +33,8 @@ echo "matrix OK for:${tested}"
 description = "Run full tests suite with compatability matrix"
 depends = ["ci:core", "ci:matrix"]
 
-[tasks."docs:javadoc"]
-description = "Build the aggregated Javadoc API reference into docs/apidocs (served at /apidocs/)"
-run = """
-#!/usr/bin/env bash
-set -euo pipefail
-mvn -B -Pdocs -DskipTests javadoc:aggregate
-rm -rf docs/apidocs
-mkdir -p docs/apidocs
-cp -R target/reports/apidocs/. docs/apidocs/
-"""
-
 [tasks."docs:serve"]
 description = "Serve the docs guide + API reference locally at http://127.0.0.1:4000/gridlink/"
-depends = ["docs:javadoc"]
 dir = "docs"
 tools = { ruby = "4.0" }
 run = """
@@ -65,11 +53,11 @@ exec bundle exec jekyll serve --host 127.0.0.1 --port "${port}"
 """
 
 [tasks."docs:clean"]
-description = "Remove generated docs output (Jekyll _site + caches, staged Javadoc)"
+description = "Remove generated docs output (Jekyll _site + caches)"
 dir = "docs"
 run = """
 #!/usr/bin/env bash
 set -euo pipefail
-rm -rf _site .jekyll-cache .jekyll-metadata .sass-cache apidocs
-echo "Cleaned docs: _site, .jekyll-cache, .jekyll-metadata, .sass-cache, apidocs"
+rm -rf _site .jekyll-cache .jekyll-metadata .sass-cache
+echo "Cleaned docs: _site, .jekyll-cache, .jekyll-metadata, .sass-cache"
 """

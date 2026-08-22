@@ -1,0 +1,43 @@
+version: 2
+
+updates:
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    groups:
+      github-actions:
+        patterns: [ "*" ]
+
+  - package-ecosystem: maven
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    groups:
+      maven-minor-and-patch:
+        patterns: [ "*" ]
+        update-types: [ "minor", "patch" ]
+
+  - package-ecosystem: maven
+    directory: "/examples/opensearch-aggrid-demo"
+    schedule:
+      interval: weekly
+    groups:
+      demo-minor-and-patch:
+        patterns: [ "*" ]
+        update-types: [ "minor", "patch" ]
+
+  - package-ecosystem: bundler
+    directory: "/docs"
+    schedule:
+      interval: weekly
+    groups:
+      docs-minor-and-patch:
+        patterns: [ "*" ]
+        update-types: [ "minor", "patch" ]
+
+  - package-ecosystem: docker
+    directory: "/examples/opensearch-aggrid-demo"
+    schedule:
+      interval: weekly

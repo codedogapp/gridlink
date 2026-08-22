@@ -6,11 +6,11 @@
 
     <groupId>io.github.codedogapp</groupId>
     <artifactId>gridlink</artifactId>
-    <version>0.0.1</version>
+    <version>0.1.0</version>
     <packaging>pom</packaging>
 
     <name>GridLink</name>
-    <description>AG Grid server side model compatability layer</description>
+    <description>AG Grid server-side model compatibility layer</description>
     <url>https://github.com/codedogapp/gridlink</url>
 
     <licenses>
@@ -43,6 +43,9 @@
         <jspecify.version>1.0.1</jspecify.version>
         <junit.version>5.11.4</junit.version>
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
+        <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
+        <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
+        <jreleaser-maven-plugin.version>1.25.0</jreleaser-maven-plugin.version>
     </properties>
 
     <modules>
@@ -80,29 +83,134 @@
         </dependencies>
     </dependencyManagement>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>jacoco-prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>jacoco-report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
     <profiles>
+        <!-- Stage artifacts (main + sources + javadoc jars, unsigned) into a single
+             root-level directory that JReleaser later signs and deploys to Central.
+             Invoke with:  mvn -Ppublication clean deploy  -->
         <profile>
-            <id>docs</id>
+            <id>publication</id>
+            <properties>
+                <!-- Every reactor module deploys into the SAME root directory so
+                     JReleaser can collect them from one staging repository. -->
+                <altDeploymentRepository>local::file:${session.executionRootDirectory}/target/staging-deploy</altDeploymentRepository>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>${maven-source-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <version>${maven-javadoc-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                         <configuration>
                             <source>${maven.compiler.release}</source>
-                            <doctitle>GridLink ${project.version} API</doctitle>
-                            <windowtitle>GridLink ${project.version} API</windowtitle>
                             <notimestamp>true</notimestamp>
-                            <detectLinks>false</detectLinks>
-                            <detectOfflineLinks>false</detectOfflineLinks>
+                            <doclint>none</doclint>
+                            <quiet>true</quiet>
                             <failOnError>false</failOnError>
-                            <bottom>
-                                <![CDATA[<a href="https://github.com/codedogapp/gridlink">GridLink</a> &middot; MIT License &middot; <a href="https://github.com/codedogapp/gridlink#readme">Guide</a>]]></bottom>
-                            <links>
-                                <link>https://docs.oracle.com/en/java/javase/17/docs/api/</link>
-                                <link>https://docs.spring.io/spring-data/elasticsearch/docs/current/api/</link>
-                            </links>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Sign, deploy to Maven Central, and cut the GitHub release + changelog.
+             Runs once at the aggregator (inherited=false). Invoke with:
+               mvn -N -Pjreleaser jreleaser:full-release
+             Credentials are read from JRELEASER_* environment variables. -->
+        <profile>
+            <id>jreleaser</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jreleaser</groupId>
+                        <artifactId>jreleaser-maven-plugin</artifactId>
+                        <version>${jreleaser-maven-plugin.version}</version>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <jreleaser>
+                                <signing>
+                                    <active>ALWAYS</active>
+                                    <pgp>
+                                        <active>ALWAYS</active>
+                                        <armored>true</armored>
+                                    </pgp>
+                                </signing>
+                                <deploy>
+                                    <maven>
+                                        <mavenCentral>
+                                            <sonatype>
+                                                <active>RELEASE</active>
+                                                <url>https://central.sonatype.com/api/v1/publisher</url>
+                                                <stagingRepositories>target/staging-deploy</stagingRepositories>
+                                                <!-- Verify POMs, sign artifacts, assert sources+javadoc jars are staged. -->
+                                                <applyMavenCentralRules>true</applyMavenCentralRules>
+                                            </sonatype>
+                                        </mavenCentral>
+                                    </maven>
+                                </deploy>
+                                <release>
+                                    <github>
+                                        <owner>codedogapp</owner>
+                                        <name>gridlink</name>
+                                        <!-- You push the tag (after merging the prepare-release PR);
+                                             JReleaser only cuts the release for the existing tag. -->
+                                        <skipTag>true</skipTag>
+                                        <changelog>
+                                            <formatted>ALWAYS</formatted>
+                                            <preset>conventional-commits</preset>
+                                            <contributors>
+                                                <format>- {{contributorName}}{{#contributorUsernameAsLink}} ({{.}}){{/contributorUsernameAsLink}}</format>
+                                            </contributors>
+                                        </changelog>
+                                    </github>
+                                </release>
+                            </jreleaser>
                         </configuration>
                     </plugin>
                 </plugins>

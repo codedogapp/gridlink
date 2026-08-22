@@ -5,7 +5,7 @@ nav_order: 5
 
 # Elasticsearch adapter
 
-[`ElasticsearchQueries`](apidocs/io/github/codedogapp/gridlink/elasticsearch/ElasticsearchQueries.html) is
+[`ElasticsearchQueries`](https://javadoc.io/doc/io.github.codedogapp/gridlink-elasticsearch/latest/io/github/codedogapp/gridlink/elasticsearch/ElasticsearchQueries.html) is
 the single facade over `gridlink-core`. It is the only place that touches Spring types, and every method
 is static.
 

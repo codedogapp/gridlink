@@ -22,14 +22,16 @@ aux_links:
   "GitHub": "https://github.com/codedogapp/gridlink"
 aux_links_new_tab: true
 nav_external_links:
-  - title: "API reference (Javadoc)"
-    url: "/gridlink/apidocs/index.html"
+  - title: "Core API (Javadoc)"
+    url: "https://javadoc.io/doc/io.github.codedogapp/gridlink-core"
+  - title: "Elasticsearch API (Javadoc)"
+    url: "https://javadoc.io/doc/io.github.codedogapp/gridlink-elasticsearch"
 
 # Mermaid diagram support (loaded from CDN, rendered client-side).
 mermaid:
   version: "11.17.0"
 
-# The aggregated Javadoc is copied to ./apidocs by the docs workflow; leave it untouched.
+# API reference is hosted on javadoc.io (per-module), linked via nav_external_links above.
 exclude:
   - Gemfile
   - Gemfile.lock

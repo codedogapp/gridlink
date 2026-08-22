@@ -25,7 +25,10 @@ Production tested and validated.
 
 ## API reference
 
-[Full Javadoc](apidocs/index.html).
+Javadoc is published per module on javadoc.io:
+
+- [`gridlink-core`](https://javadoc.io/doc/io.github.codedogapp/gridlink-core) &mdash; framework-agnostic model (filters, sorts).
+- [`gridlink-elasticsearch`](https://javadoc.io/doc/io.github.codedogapp/gridlink-elasticsearch) &mdash; Spring Data Elasticsearch adapter.
 
 ## Modules
 

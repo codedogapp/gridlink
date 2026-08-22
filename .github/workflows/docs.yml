@@ -5,13 +5,11 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
-# Allow the workflow to publish to GitHub Pages.
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# One concurrent Pages deployment; don't cancel an in-flight publish.
 concurrency:
   group: pages
   cancel-in-progress: false
@@ -22,22 +20,6 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/setup-java@v5
-        with:
-          distribution: corretto
-          java-version: '21'
-          cache: maven
-
-      # Aggregated Javadoc for both modules -> target/reports/apidocs
-      - name: Build Javadoc
-        run: mvn -B -Pdocs -DskipTests javadoc:aggregate
-
-      # Stage it under the Jekyll site so it publishes at /apidocs/
-      - name: Stage Javadoc into the guide
-        run: |
-          mkdir -p docs/apidocs
-          cp -R target/reports/apidocs/. docs/apidocs/
-
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '4.0'
@@ -46,8 +28,6 @@ jobs:
 
       - uses: actions/configure-pages@v5
 
-      # Build the guide with our own Gemfile (Jekyll 4 + just-the-docs). The staged
-      # ./apidocs is plain static Javadoc, so Jekyll copies it through untouched.
       - name: Build site
         working-directory: docs
         env:

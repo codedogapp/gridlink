@@ -6,7 +6,6 @@ on:
   pull_request:
 
 jobs:
-  # Core is framework-agnostic: build and test it once.
   core:
     runs-on: ubuntu-latest
     steps:
@@ -18,9 +17,6 @@ jobs:
           cache: maven
       - run: mvn -B -pl gridlink-core -am verify
 
-  # Single source of truth for supported spring-data-elasticsearch lines lives in
-  # ci/spring-data-elasticsearch-versions.json (a JSON array). Expose it as a job
-  # output so the adapter-matrix job can fan out over it via fromJSON.
   versions:
     runs-on: ubuntu-latest
     outputs:
@@ -30,8 +26,6 @@ jobs:
       - id: read
         run: echo "matrix=$(cat ci/spring-data-elasticsearch-versions.json)" >> "$GITHUB_OUTPUT"
 
-  # Prove the single adapter artifact works across the supported spring-data-elasticsearch lines:
-  #   5.x -> Spring Boot 3, 6.x -> Spring Boot 4. Same sources, different runtime version.
   adapter-matrix:
     needs: versions
     runs-on: ubuntu-latest

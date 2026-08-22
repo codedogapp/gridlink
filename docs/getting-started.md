@@ -10,28 +10,32 @@ Elasticsearch. It mirrors the runnable [`examples/opensearch-aggrid-demo`](https
 
 ## 1. Install
 
-Not yet on Maven Central &mdash; build and install locally, then depend on the adapter:
+Available on [Maven Central](https://central.sonatype.com/artifact/io.github.codedogapp/gridlink-elasticsearch).
+Add the adapter &mdash; it pulls in `gridlink-core`:
 
-```bash
-git clone https://github.com/codedogapp/gridlink.git
-cd gridlink && mvn -B install -DskipTests
-```
+**Maven**
 
 ```xml
 <dependency>
     <groupId>io.github.codedogapp</groupId>
     <artifactId>gridlink-elasticsearch</artifactId>
-    <version>0.0.1</version>
+    <version>0.1.0</version>
 </dependency>
+```
+
+**Gradle**
+
+```kotlin
+implementation("io.github.codedogapp:gridlink-elasticsearch:0.1.0")
 ```
 
 `gridlink-elasticsearch` declares `spring-data-elasticsearch` as `provided` &mdash; your application supplies it.
 
-To determine the version compatible with your Spring Boot app, check [Spring's compatability matrix](https://docs.spring.io/spring-data/elasticsearch/reference/elasticsearch/versions.html)
+To determine the version compatible with your Spring Boot app, check [Spring's compatibility matrix](https://docs.spring.io/spring-data/elasticsearch/reference/elasticsearch/versions.html)
 
 ## 2. Model the grid's columns
 
-Implement [`FilterModel`](apidocs/io/github/codedogapp/gridlink/core/filter/FilterModel.html) with one typed component per filterable column. 
+Implement [`FilterModel`](https://javadoc.io/doc/io.github.codedogapp/gridlink-core/latest/io/github/codedogapp/gridlink/core/filter/FilterModel.html) with one typed component per filterable column. 
 
 `filters()` maps each component to the **document field** it targets &mdash; the key is a field name, 
 not a Java name, so a column may filter a differently named field.
@@ -54,16 +58,16 @@ public record ProductFilterModel(
 }
 ```
 
-- Use [`FieldFilter`](apidocs/io/github/codedogapp/gridlink/core/filter/FieldFilter.html) for text columns,
-  [`DateFieldFilter`](apidocs/io/github/codedogapp/gridlink/core/filter/DateFieldFilter.html) for date columns.
+- Use [`FieldFilter`](https://javadoc.io/doc/io.github.codedogapp/gridlink-core/latest/io/github/codedogapp/gridlink/core/filter/FieldFilter.html) for text columns,
+  [`DateFieldFilter`](https://javadoc.io/doc/io.github.codedogapp/gridlink-core/latest/io/github/codedogapp/gridlink/core/filter/DateFieldFilter.html) for date columns.
 - Columns with no active filter arrive as `null` and are ignored.
 - Return a `LinkedHashMap` if a stable column order matters.
 
 ## 3. Accept the request and run the query
 
-[`GridRequest<F>`](apidocs/io/github/codedogapp/gridlink/core/grid/GridRequest.html) is generic over your
+[`GridRequest<F>`](https://javadoc.io/doc/io.github.codedogapp/gridlink-core/latest/io/github/codedogapp/gridlink/core/grid/GridRequest.html) is generic over your
 `FilterModel`, so ag-grid's JSON binds straight in. One call &mdash;
-[`ElasticsearchQueries.toQuery`](apidocs/io/github/codedogapp/gridlink/elasticsearch/ElasticsearchQueries.html) &mdash;
+[`ElasticsearchQueries.toQuery`](https://javadoc.io/doc/io.github.codedogapp/gridlink-elasticsearch/latest/io/github/codedogapp/gridlink/elasticsearch/ElasticsearchQueries.html) &mdash;
 assembles criteria, sort and paging into a `CriteriaQuery`:
 
 ```java
@@ -82,7 +86,7 @@ class ProductController {
 }
 ```
 
-[`GridResponse<T>`](apidocs/io/github/codedogapp/gridlink/core/grid/GridResponse.html) carries the page of
+[`GridResponse<T>`](https://javadoc.io/doc/io.github.codedogapp/gridlink-core/latest/io/github/codedogapp/gridlink/core/grid/GridResponse.html) carries the page of
 `rows` plus `lastRow` (the total match count) that ag-grid's infinite model needs to find the end of the
 dataset.
 
