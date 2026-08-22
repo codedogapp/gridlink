@@ -39,3 +39,11 @@ build/
 *.db-journal
 *.db-wal
 *.db-shm
+### Generated API docs (staged into the guide by CI) ###
+/docs/apidocs/
+/docs/_site/
+/docs/.jekyll-cache/
+/docs/.jekyll-metadata
+/docs/Gemfile.lock
+/docs/vendor/
+/docs/.bundle/

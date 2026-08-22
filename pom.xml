@@ -11,7 +11,7 @@
 
     <name>GridLink</name>
     <description>AG Grid server side model compatability layer</description>
-    <url>https://github.com/codedogapp/project-veritas</url>
+    <url>https://github.com/codedogapp/gridlink</url>
 
     <licenses>
         <license>
@@ -42,6 +42,7 @@
         <spring-data-elasticsearch.version>6.1.0</spring-data-elasticsearch.version>
         <jspecify.version>1.0.1</jspecify.version>
         <junit.version>5.11.4</junit.version>
+        <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
     </properties>
 
     <modules>
@@ -78,5 +79,35 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <profiles>
+        <profile>
+            <id>docs</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${maven-javadoc-plugin.version}</version>
+                        <configuration>
+                            <source>${maven.compiler.release}</source>
+                            <doctitle>GridLink ${project.version} API</doctitle>
+                            <windowtitle>GridLink ${project.version} API</windowtitle>
+                            <notimestamp>true</notimestamp>
+                            <detectLinks>false</detectLinks>
+                            <detectOfflineLinks>false</detectOfflineLinks>
+                            <failOnError>false</failOnError>
+                            <bottom>
+                                <![CDATA[<a href="https://github.com/codedogapp/gridlink">GridLink</a> &middot; MIT License &middot; <a href="https://github.com/codedogapp/gridlink#readme">Guide</a>]]></bottom>
+                            <links>
+                                <link>https://docs.oracle.com/en/java/javase/17/docs/api/</link>
+                                <link>https://docs.spring.io/spring-data/elasticsearch/docs/current/api/</link>
+                            </links>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

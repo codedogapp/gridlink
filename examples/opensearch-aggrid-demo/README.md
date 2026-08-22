@@ -5,13 +5,13 @@ A light, end-to-end example that exercises [gridlink](../../) for real: an
 sort/filter model into a Spring Data `CriteriaQuery` via `gridlink-elasticsearch` and runs it against
 OpenSearch.
 
-It is intentionally small — one `products` catalogue — but wires the full path so you can
+It is intentionally small &mdash; one `products` catalogue &mdash; but wires the full path so you can
 poke filters/sorts in a browser and see the generated queries hit a real cluster.
 
 **Two stores, mirrored.** As in a real deployment, OpenSearch is *not* the source of truth: a local
 **SQLite** database is. On first run the app builds SQLite from a checked-in SQL script (~1,200 rows,
 with ids and `createdAt` baked in) and then rebuilds the OpenSearch `products` index from it. SQLite
-persists across restarts; the search index is fully derived and disposable — the grid only ever queries
+persists across restarts; the search index is fully derived and disposable &mdash; the grid only ever queries
 the index. The binary `products.db` is git-ignored, so only the plain-text `.sql` is committed.
 
 ## Prerequisites

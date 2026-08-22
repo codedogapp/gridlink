@@ -32,3 +32,44 @@ echo "matrix OK for:${tested}"
 [tasks.test]
 description = "Run full tests suite with compatability matrix"
 depends = ["ci:core", "ci:matrix"]
+
+[tasks."docs:javadoc"]
+description = "Build the aggregated Javadoc API reference into docs/apidocs (served at /apidocs/)"
+run = """
+#!/usr/bin/env bash
+set -euo pipefail
+mvn -B -Pdocs -DskipTests javadoc:aggregate
+rm -rf docs/apidocs
+mkdir -p docs/apidocs
+cp -R target/reports/apidocs/. docs/apidocs/
+"""
+
+[tasks."docs:serve"]
+description = "Serve the docs guide + API reference locally at http://127.0.0.1:4000/gridlink/"
+depends = ["docs:javadoc"]
+dir = "docs"
+tools = { ruby = "4.0" }
+run = """
+#!/usr/bin/env bash
+set -euo pipefail
+port="${PORT:-4000}"
+if lsof -nP -iTCP:"${port}" -sTCP:LISTEN >/dev/null 2>&1; then
+  pid="$(lsof -nP -tiTCP:"${port}" -sTCP:LISTEN | head -1)"
+  echo "Port ${port} is already in use (PID ${pid}) — a docs server is probably still running."
+  echo "Stop it:  kill ${pid}   ·   or use another port:  PORT=4001 mise run docs:serve"
+  exit 1
+fi
+bundle config set --local path vendor/bundle
+bundle check >/dev/null 2>&1 || bundle install
+exec bundle exec jekyll serve --host 127.0.0.1 --port "${port}"
+"""
+
+[tasks."docs:clean"]
+description = "Remove generated docs output (Jekyll _site + caches, staged Javadoc)"
+dir = "docs"
+run = """
+#!/usr/bin/env bash
+set -euo pipefail
+rm -rf _site .jekyll-cache .jekyll-metadata .sass-cache apidocs
+echo "Cleaned docs: _site, .jekyll-cache, .jekyll-metadata, .sass-cache, apidocs"
+"""

@@ -1,0 +1,56 @@
+<button
+        type="button"
+        id="theme-toggle"
+        class="theme-toggle"
+        title="Toggle dark mode"
+        aria-label="Toggle dark mode"
+        aria-pressed="false"
+        style="background:none;border:0;cursor:pointer;padding:0 .75rem;font-size:1.1rem;line-height:1;color:inherit;align-self:center;">
+    <span class="theme-toggle-icon" aria-hidden="true">🌙</span>
+</button>
+<script>
+  (function () {
+    const key = 'jtd-color-scheme';
+    const btn = document.getElementById('theme-toggle');
+    if (!btn) return;
+
+    function currentScheme() {
+      return (window.jtd && jtd.getTheme && jtd.getTheme() === 'dark') ? 'dark' : 'light';
+    }
+
+    function paint(scheme) {
+      const dark = scheme === 'dark';
+      btn.setAttribute('aria-pressed', dark ? 'true' : 'false');
+      btn.querySelector('.theme-toggle-icon').textContent = dark ? '☀️' : '🌙';
+      btn.title = dark ? 'Switch to light mode' : 'Switch to dark mode';
+    }
+
+    paint(currentScheme());
+
+    btn.addEventListener('click', function () {
+      const next = currentScheme() === 'dark' ? 'light' : 'dark';
+      if (window.jtd) jtd.setTheme(next);
+      try {
+        localStorage.setItem(key, next);
+      } catch (e) {
+      }
+      paint(next);
+    });
+
+    // Follow OS changes until the visitor makes an explicit choice.
+    if (window.matchMedia) {
+      matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+        let saved = null;
+        try {
+          saved = localStorage.getItem(key);
+        } catch (x) {
+        }
+        if (!saved) {
+          const scheme = e.matches ? 'dark' : 'light';
+          if (window.jtd) jtd.setTheme(scheme);
+          paint(scheme);
+        }
+      });
+    }
+  })();
+</script>

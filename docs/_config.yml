@@ -1,0 +1,36 @@
+title: GridLink
+description: >-
+  Bind ag-grid's server-side sort/filter model straight to Spring Data
+  Elasticsearch queries — no mapping code.
+theme: just-the-docs
+url: https://codedogapp.github.io
+baseurl: /gridlink
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
+
+# just-the-docs options
+color_scheme: light
+search_enabled: true
+heading_anchors: true
+back_to_top: true
+back_to_top_text: "Back to top"
+aux_links:
+  "GitHub": "https://github.com/codedogapp/gridlink"
+aux_links_new_tab: true
+nav_external_links:
+  - title: "API reference (Javadoc)"
+    url: "/gridlink/apidocs/index.html"
+
+# Mermaid diagram support (loaded from CDN, rendered client-side).
+mermaid:
+  version: "11.17.0"
+
+# The aggregated Javadoc is copied to ./apidocs by the docs workflow; leave it untouched.
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - vendor
