@@ -14,6 +14,7 @@
 
     <name>GridLink Core</name>
     <description>Framework-agnostic ag-grid server-side model (filters, sorts). Zero dependencies.</description>
+    <url>https://github.com/codedogapp/gridlink/tree/main/gridlink-core</url>
 
     <dependencies>
         <dependency>
