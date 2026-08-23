@@ -39,7 +39,7 @@ flowchart TB
 ## The core model
 
 The port is a small, sealed type hierarchy. [`FilterModel`](https://javadoc.io/doc/io.github.codedogapp/gridlink-core/latest/io/github/codedogapp/gridlink/core/filter/FilterModel.html)
-exposes its columns as a `Map<String, ColumnFilter>`, and every value is one of exactly two records &mdash;
+exposes its columns as a `Map<String, ColumnFilter>`, and every value is one of exactly three records &mdash;
 the compiler enforces the set, so translation needs no reflection.
 
 ```mermaid
@@ -58,6 +58,14 @@ classDiagram
         +FilterOperator operator
         +List~FieldFilter~ conditions
     }
+    class NumberFieldFilter {
+        <<record>>
+        +NumberFilterType type
+        +Number filter
+        +Number filterTo
+        +FilterOperator operator
+        +List~NumberFieldFilter~ conditions
+    }
     class DateFieldFilter {
         <<record>>
         +DateFilterType type
@@ -69,6 +77,7 @@ classDiagram
 
     FilterModel o-- ColumnFilter : values
     ColumnFilter <|-- FieldFilter
+    ColumnFilter <|-- NumberFieldFilter
     ColumnFilter <|-- DateFieldFilter
 ```
 

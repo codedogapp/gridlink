@@ -127,6 +127,6 @@ dataset.
 
 ## Next
 
-- [Filtering](filtering.md) &mdash; every text/date filter and the query it produces.
+- [Filtering](filtering.md) &mdash; every text, number and date filter and the query it produces.
 - [Sorting & paging](sorting-and-paging.md) &mdash; multi-column sort and the row-window &rarr; page mapping.
 - [Elasticsearch adapter](elasticsearch-adapter.md) &mdash; the lower-level `toCriteria` / `sorts` entry points.

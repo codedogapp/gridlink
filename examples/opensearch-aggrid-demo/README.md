@@ -54,13 +54,15 @@ of rows plus `lastRow` for the infinite model. Example:
 curl -s -X POST localhost:8080/api/products/query \
   -H 'Content-Type: application/json' \
   -d '{"startRow":0,"endRow":50,
-       "filterModel":{"name":{"filterType":"text","operator":"OR",
-         "conditions":[{"type":"contains","filter":"mac"},
-                       {"type":"contains","filter":"iphone"}]}}}'
+       "filterModel":{
+         "price":{"filterType":"number","type":"inRange","filter":100,"filterTo":500},
+         "name":{"filterType":"text","operator":"OR",
+           "conditions":[{"type":"contains","filter":"mac"},
+                         {"type":"contains","filter":"iphone"}]}}}'
 ```
 
-Case-insensitive matching (via `lowercase_normalizer`), `contains/equals/startsWith/…`, date `inRange`,
-compound `AND`/`OR` on one field, and multi-column filters all work.
+Case-insensitive matching (via `lowercase_normalizer`), `contains/equals/startsWith/…`, number ranges
+(`price` `inRange`), date `inRange`, compound `AND`/`OR` on one field, and multi-column filters all work.
 
 To see the raw OpenSearch DSL, start the jar with `-Dlogging.level.tracer=TRACE` and grep the log for
 `products/_search`.

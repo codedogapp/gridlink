@@ -4,6 +4,7 @@ import io.github.codedogapp.gridlink.core.filter.ColumnFilter;
 import io.github.codedogapp.gridlink.core.filter.DateFieldFilter;
 import io.github.codedogapp.gridlink.core.filter.FieldFilter;
 import io.github.codedogapp.gridlink.core.filter.FilterModel;
+import io.github.codedogapp.gridlink.core.filter.NumberFieldFilter;
 import io.github.codedogapp.gridlink.core.grid.GridRequest;
 import io.github.codedogapp.gridlink.core.sort.SortModel;
 
@@ -58,6 +59,27 @@ public final class ElasticsearchQueries {
     }
 
     /**
+     * Translates a {@link NumberFieldFilter} (simple, {@code inRange}, or compound) into a {@link Criteria}.
+     */
+    public static @Nullable Criteria toCriteria(final String field, final @Nullable NumberFieldFilter filter) {
+        if (filter == null) {
+            return null;
+        }
+
+        if (filter.conditions() != null && !filter.conditions().isEmpty()) {
+            final var criteria = filter.conditions().stream()
+                .map(c -> ElasticsearchCriteria.number(c.type(), field, c.filter(), c.filterTo()))
+                .filter(Objects::nonNull)
+                .toList();
+            return ElasticsearchCriteria.chain(filter.operator(), criteria);
+        } else if (filter.type() != null) {
+            return ElasticsearchCriteria.number(filter.type(), field, filter.filter(), filter.filterTo());
+        }
+
+        return null;
+    }
+
+    /**
      * Translates a {@link DateFieldFilter} (simple, {@code inRange}, or compound) into a {@link Criteria}.
      */
     public static @Nullable Criteria toCriteria(final String field, final @Nullable DateFieldFilter filter) {
@@ -93,8 +115,8 @@ public final class ElasticsearchQueries {
     /**
      * Translates a map of <em>field name → {@link ColumnFilter}</em> into a single root
      * {@link Criteria}. Each entry's key is the target field and its value is dispatched to the
-     * matching per-column translator ({@link FieldFilter} → text, {@link DateFieldFilter} → date);
-     * {@code null} values (columns with no active filter) are skipped.
+     * matching per-column translator ({@link FieldFilter} → text, {@link NumberFieldFilter} → number,
+     * {@link DateFieldFilter} → date); {@code null} values (columns with no active filter) are skipped.
      *
      * <p>Every column's criteria is attached with {@link Criteria#subCriteria(Criteria)} rather than
      * {@link Criteria#and(Criteria)}. {@code and} splices only the other criteria's final node into
@@ -124,6 +146,9 @@ public final class ElasticsearchQueries {
     private static @Nullable Criteria columnCriteria(final String field, final @Nullable ColumnFilter filter) {
         if (filter instanceof final FieldFilter text) {
             return toCriteria(field, text);
+        }
+        if (filter instanceof final NumberFieldFilter number) {
+            return toCriteria(field, number);
         }
         if (filter instanceof final DateFieldFilter date) {
             return toCriteria(field, date);

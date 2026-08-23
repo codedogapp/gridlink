@@ -6,12 +6,15 @@ nav_order: 3
 # Filtering
 
 A [`FilterModel`](https://javadoc.io/doc/io.github.codedogapp/gridlink-core/latest/io/github/codedogapp/gridlink/core/filter/FilterModel.html) exposes its columns as a `Map<String, ColumnFilter>` &mdash; field name &rarr; filter. 
-Each value is one of the two sealed [`ColumnFilter`](https://javadoc.io/doc/io.github.codedogapp/gridlink-core/latest/io/github/codedogapp/gridlink/core/filter/ColumnFilter.html) types:
+Each value is one of the sealed [`ColumnFilter`](https://javadoc.io/doc/io.github.codedogapp/gridlink-core/latest/io/github/codedogapp/gridlink/core/filter/ColumnFilter.html) types:
 
 | Type | Column kind | ag-grid `filterType` |
 | --- | --- | --- |
 | [`FieldFilter`](https://javadoc.io/doc/io.github.codedogapp/gridlink-core/latest/io/github/codedogapp/gridlink/core/filter/FieldFilter.html) | text | `text` |
+| [`NumberFieldFilter`](https://javadoc.io/doc/io.github.codedogapp/gridlink-core/latest/io/github/codedogapp/gridlink/core/filter/NumberFieldFilter.html) | number | `number` |
 | [`DateFieldFilter`](https://javadoc.io/doc/io.github.codedogapp/gridlink-core/latest/io/github/codedogapp/gridlink/core/filter/DateFieldFilter.html) | date | `date` |
+| _Set_ | set | `set` &mdash; **coming soon** |
+| _Multi_ | multi-column | `multi` &mdash; **coming soon** |
 
 Every type mirrors ag-grid's filter JSON, so a request payload binds straight into it. Text values are
 matched **case-insensitively** (the adapter lowercases the query term).
@@ -47,6 +50,39 @@ each produces for value `mac` on field `name`:
 A blank/absent `filter` value drops the condition (it becomes match-all for that column) &mdash; except for
 `blank` / `notBlank`, which need no value.
 
+## Number filters
+
+A simple number filter is a `type` + `filter` value; `inRange` adds a `filterTo` upper bound:
+
+```json
+{
+  "price": {
+    "filterType": "number",
+    "type": "inRange",
+    "filter": 10,
+    "filterTo": 20
+  }
+}
+```
+
+Values bind to `Number` (Jackson keeps integers integral). [`NumberFilterType`](https://javadoc.io/doc/io.github.codedogapp/gridlink-core/latest/io/github/codedogapp/gridlink/core/filter/NumberFilterType.html)
+for field `price`:
+
+| `type` | Matches | Elasticsearch query |
+| --- | --- | --- |
+| `equals` | field equals the value | `price = 10` |
+| `notEqual` | field differs from the value | `NOT price = 10` |
+| `greaterThan` | field greater than the value | `price > 10` |
+| `greaterThanOrEqual` | field at least the value | `price >= 10` |
+| `lessThan` | field less than the value | `price < 10` |
+| `lessThanOrEqual` | field at most the value | `price <= 10` |
+| `inRange` | within `filter`…`filterTo` | `price` in `[10 … 20]` |
+| `blank` | field is missing / empty | `price` does not exist |
+| `notBlank` | field is present | `price` exists |
+
+A missing `filter` (both bounds for `inRange`) drops the condition &mdash; except for `blank` / `notBlank`,
+which need no value.
+
 ## Date filters
 
 Dates are ISO strings (`yyyy-MM-dd`; anything after the day is ignored). `inRange` uses both bounds, every
@@ -79,7 +115,7 @@ time-of-day. An unparseable or missing date drops the condition.
 ## Compound filters (AND / OR)
 
 ag-grid's "two conditions" mode sends an `operator` plus a `conditions` array. It works identically for
-text and dates:
+text, numbers and dates:
 
 ```json
 {
@@ -165,4 +201,17 @@ DateFieldFilter.builder()
     .dateFrom("2024-01-01")
     .dateTo("2024-12-31")
     .build();
+
+// price between 10 and 20
+NumberFieldFilter.builder()
+    .type(NumberFilterType.inRange)
+    .filter(10)
+    .filterTo(20)
+    .build();
 ```
+
+## Coming soon
+
+ag-grid's **set** filter (`filterType: "set"`, a `values` array) and **multi-column** filter
+(`filterType: "multi"`) are not modelled yet. A set filter also unlocks boolean and enum columns, since
+ag-grid filters those through the set filter rather than a dedicated boolean filter.

@@ -5,6 +5,8 @@ import io.github.codedogapp.gridlink.core.filter.DateFieldFilter;
 import io.github.codedogapp.gridlink.core.filter.DateFilterType;
 import io.github.codedogapp.gridlink.core.filter.FieldFilter;
 import io.github.codedogapp.gridlink.core.filter.FilterModel;
+import io.github.codedogapp.gridlink.core.filter.NumberFieldFilter;
+import io.github.codedogapp.gridlink.core.filter.NumberFilterType;
 import io.github.codedogapp.gridlink.core.filter.TextFilterType;
 
 import org.junit.jupiter.api.Test;
@@ -38,6 +40,11 @@ class ElasticsearchQueriesFilterModelTest {
         .dateFrom("2024-01-01")
         .build();
 
+    private static final NumberFieldFilter PRICE = NumberFieldFilter.builder()
+        .type(NumberFilterType.greaterThan)
+        .filter(100)
+        .build();
+
     private static Map<String, ColumnFilter> columns(final Object... fieldThenFilter) {
         final Map<String, ColumnFilter> map = new LinkedHashMap<>();
         for (int i = 0; i < fieldThenFilter.length; i += 2) {
@@ -64,11 +71,17 @@ class ElasticsearchQueriesFilterModelTest {
                 new Criteria().subCriteria(ElasticsearchQueries.toCriteria("name", NAME))
             ),
             Arguments.of(
+                "single number column keyed by field name",
+                columns("price", PRICE),
+                new Criteria().subCriteria(ElasticsearchQueries.toCriteria("price", PRICE))
+            ),
+            Arguments.of(
                 "every column active, kept in map iteration order",
-                columns("name", NAME, "category", CATEGORY, "createdAt", CREATED_AT),
+                columns("name", NAME, "category", CATEGORY, "price", PRICE, "createdAt", CREATED_AT),
                 new Criteria()
                     .subCriteria(ElasticsearchQueries.toCriteria("name", NAME))
                     .subCriteria(ElasticsearchQueries.toCriteria("category", CATEGORY))
+                    .subCriteria(ElasticsearchQueries.toCriteria("price", PRICE))
                     .subCriteria(ElasticsearchQueries.toCriteria("createdAt", CREATED_AT))
             ),
             Arguments.of(

@@ -18,7 +18,7 @@ Production tested and validated.
 | Page | Contents |
 | --- | --- |
 | [Getting started](getting-started.md) | End-to-end: model a grid, accept the request, run the query. |
-| [Filtering](filtering.md) | Text and date filters, compound `AND`/`OR`, multi-column, and the query each produces. |
+| [Filtering](filtering.md) | Text, number and date filters, compound `AND`/`OR`, multi-column, and the query each produces. |
 | [Sorting & paging](sorting-and-paging.md) | Multi-column sort and how the row window maps to a page. |
 | [Elasticsearch adapter](elasticsearch-adapter.md) | The `ElasticsearchQueries` facade and its translation rules. |
 | [Architecture](architecture.md) | Module layout, design decisions, and version compatibility. |

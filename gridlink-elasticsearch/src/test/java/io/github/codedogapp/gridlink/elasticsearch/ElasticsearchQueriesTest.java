@@ -4,6 +4,8 @@ import io.github.codedogapp.gridlink.core.filter.DateFieldFilter;
 import io.github.codedogapp.gridlink.core.filter.DateFilterType;
 import io.github.codedogapp.gridlink.core.filter.FieldFilter;
 import io.github.codedogapp.gridlink.core.filter.FilterOperator;
+import io.github.codedogapp.gridlink.core.filter.NumberFieldFilter;
+import io.github.codedogapp.gridlink.core.filter.NumberFilterType;
 import io.github.codedogapp.gridlink.core.sort.SortModel;
 import io.github.codedogapp.gridlink.core.sort.SortDirection;
 import io.github.codedogapp.gridlink.core.filter.TextFilterType;
@@ -58,6 +60,22 @@ class ElasticsearchQueriesTest {
     }
 
     @Test
+    void compoundNumberFilterChainsConditions() {
+        final var filter = NumberFieldFilter.builder()
+            .operator(FilterOperator.AND)
+            .conditions(
+                List.of(
+                    NumberFieldFilter.builder().type(NumberFilterType.greaterThan).filter(1).build(),
+                    NumberFieldFilter.builder().type(NumberFilterType.lessThan).filter(100).build()
+                )
+            )
+            .build();
+
+        final var expected = Criteria.where("n").greaterThan(1).and(Criteria.where("n").lessThan(100));
+        assertEquals(expected, ElasticsearchQueries.toCriteria("n", filter));
+    }
+
+    @Test
     void sortsReturnsSpringSortsInOrder() {
         final var sorts = ElasticsearchQueries.sorts(
             List.of(
@@ -74,6 +92,7 @@ class ElasticsearchQueriesTest {
     @Test
     void nullInputsAreEmpty() {
         assertNull(ElasticsearchQueries.toCriteria("f", (FieldFilter) null));
+        assertNull(ElasticsearchQueries.toCriteria("n", (NumberFieldFilter) null));
         assertNull(ElasticsearchQueries.toCriteria("f", (DateFieldFilter) null));
         assertEquals(List.of(), ElasticsearchQueries.sorts(null));
     }

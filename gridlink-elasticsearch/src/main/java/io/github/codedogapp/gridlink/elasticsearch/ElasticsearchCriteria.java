@@ -2,6 +2,7 @@ package io.github.codedogapp.gridlink.elasticsearch;
 
 import io.github.codedogapp.gridlink.core.filter.DateFilterType;
 import io.github.codedogapp.gridlink.core.filter.FilterOperator;
+import io.github.codedogapp.gridlink.core.filter.NumberFilterType;
 import io.github.codedogapp.gridlink.core.sort.SortDirection;
 import io.github.codedogapp.gridlink.core.filter.TextFilterType;
 
@@ -22,9 +23,9 @@ import java.util.List;
  * {@link Criteria} / {@link Sort.Direction}.
  * <p>
  * This is the single place that touches Spring types. It only calls the long-stable subset of the
- * {@code Criteria} API ({@code where/is/not/between/expression/contains/exists/greaterThan/lessThan})
- * which is identical across spring-data-elasticsearch 5.x and 6.x, so one artifact serves both
- * Spring Boot 3 and 4.
+ * {@code Criteria} API ({@code where/is/not/between/expression/contains/exists/greaterThan/
+ * greaterThanEqual/lessThan/lessThanEqual}) which is identical across spring-data-elasticsearch 5.x
+ * and 6.x, so one artifact serves both Spring Boot 3 and 4.
  */
 public final class ElasticsearchCriteria {
 
@@ -64,6 +65,48 @@ public final class ElasticsearchCriteria {
             case startsWith -> Criteria.where(field).expression(escape(v) + "*");
             case endsWith -> Criteria.where(field).expression("*" + escape(v));
             case blank, notBlank -> throw new IllegalStateException("handled above");
+        };
+    }
+
+    /**
+     * Builds a {@link Criteria} for a single number filter token. For {@code inRange} both bounds are
+     * used; every other type uses {@code filter} only.
+     *
+     * @return the criteria, or {@code null} when the required value(s) are absent (except
+     * {@code blank}/{@code notBlank}).
+     */
+    public static @Nullable Criteria number(
+        final NumberFilterType type,
+        final String field,
+        final @Nullable Number filter,
+        final @Nullable Number filterTo
+    ) {
+        if (type == NumberFilterType.blank) {
+            return Criteria.where(field).not().exists();
+        }
+
+        if (type == NumberFilterType.notBlank) {
+            return Criteria.where(field).exists();
+        }
+
+        if (type == NumberFilterType.inRange) {
+            if (filter == null && filterTo == null) {
+                return null;
+            }
+            return Criteria.where(field).between(filter, filterTo);
+        }
+
+        if (filter == null) {
+            return null;
+        }
+        return switch (type) {
+            case equals -> Criteria.where(field).is(filter);
+            case notEqual -> Criteria.where(field).not().is(filter);
+            case greaterThan -> Criteria.where(field).greaterThan(filter);
+            case greaterThanOrEqual -> Criteria.where(field).greaterThanEqual(filter);
+            case lessThan -> Criteria.where(field).lessThan(filter);
+            case lessThanOrEqual -> Criteria.where(field).lessThanEqual(filter);
+            case inRange, blank, notBlank -> throw new IllegalStateException("handled above");
         };
     }
 

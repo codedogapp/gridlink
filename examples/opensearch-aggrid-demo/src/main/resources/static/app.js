@@ -28,7 +28,7 @@ const columnDefs = [
   {field: 'category', filter: 'agTextColumnFilter', flex: 1},
   {
     field: 'price',
-    filter: false,
+    filter: 'agNumberColumnFilter',
     flex: 1,
     type: 'rightAligned',
     valueFormatter: (p) => (p.value != null ? '$' + Number(p.value).toFixed(2) : ''),
